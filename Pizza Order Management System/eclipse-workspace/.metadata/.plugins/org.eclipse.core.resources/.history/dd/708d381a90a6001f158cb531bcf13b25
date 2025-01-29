@@ -1,0 +1,21 @@
+package main;
+
+import models.User;
+import services.UserService;
+
+public class main {
+    public static void main(String[] args) {
+        UserService userService = new UserService();
+        
+        // Test the registration with a new user
+        User user = new User("root", "12345");
+        boolean isRegistered = userService.registerUser(user);
+
+        // Print the result
+        if (isRegistered) {
+            System.out.println("User registered successfully!");
+        } else {
+            System.out.println("User registration failed!");
+        }
+    }
+}

@@ -1,0 +1,54 @@
+package services;
+
+import database.DatabaseConnection;
+import models.Pizza;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class PizzaService {
+
+    // Fetch pizza menu from the database
+    public List<Pizza> getPizzaMenu() {
+        List<Pizza> pizzas = new ArrayList<>();
+        String sql = "SELECT * FROM pizzas"; // This query assumes there is a 'pizzas' table with 'pizza_id', 'name', 'price' columns
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                // Create Pizza object from result set
+                Pizza pizza = new Pizza(
+                        rs.getInt("pizza_id"),
+                        rs.getString("name"),
+                        rs.getDouble("price")
+                );
+                pizzas.add(pizza); // Add pizza to the list
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching pizza menu: " + e.getMessage());
+        }
+        return pizzas;
+    }
+
+    // Calculate the total cost for a selected pizza and quantity
+    public double calculateTotalCost(int pizzaId, int quantity) {
+        double totalCost = 0.0;
+        String sql = "SELECT price FROM pizzas WHERE pizza_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, pizzaId); // Set pizzaId parameter in the query
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                double price = rs.getDouble("price"); // Get pizza price from the result set
+                totalCost = price * quantity; // Calculate total cost
+            }
+        } catch (SQLException e) {
+            System.out.println("Error calculating total cost: " + e.getMessage());
+        }
+        return totalCost;
+    }
+}

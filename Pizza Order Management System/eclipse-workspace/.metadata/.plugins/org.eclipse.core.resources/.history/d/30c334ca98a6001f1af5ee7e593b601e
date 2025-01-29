@@ -1,0 +1,26 @@
+package services;
+
+import database.DatabaseConnection;
+import models.Order;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class OrderService {
+
+    public boolean placeOrder(Order order) {
+        String sql = "INSERT INTO orders (user_id, pizza_id, quantity, total_price) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, order.getUserId());
+            stmt.setInt(2, order.getPizzaId());
+            stmt.setInt(3, order.getQuantity());
+            stmt.setDouble(4, order.getTotalPrice());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error placing order: " + e.getMessage());
+            return false;
+        }
+    }
+}

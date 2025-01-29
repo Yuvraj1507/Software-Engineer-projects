@@ -1,0 +1,39 @@
+package main;
+
+import models.Pizza;
+import models.Order;
+import services.OrderService;
+
+public class Main {
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        // Sample pizza data
+        Pizza pizza1 = new Pizza(1, "Margherita", 12.99);  // Initialize Pizza object
+        Pizza pizza2 = new Pizza(2, "Pepperoni", 15.99);  // Initialize another Pizza object
+
+        // Sample order data
+        Order order1 = new Order(1, 101, pizza1, 2); // User 101 orders 2 Margherita pizzas
+        Order order2 = new Order(2, 102, pizza2, 1); // User 102 orders 1 Pepperoni pizza
+
+        // Add orders to the database
+        boolean isOrder1Added = orderService.addOrder(order1);
+        boolean isOrder2Added = orderService.addOrder(order2);
+
+        // Check if orders were added successfully
+        if (isOrder1Added) {
+            System.out.println("Order 1 added successfully!");
+        } else {
+            System.out.println("Failed to add Order 1.");
+        }
+
+        if (isOrder2Added) {
+            System.out.println("Order 2 added successfully!");
+        } else {
+            System.out.println("Failed to add Order 2.");
+        }
+
+        // Retrieve and display all orders for user 101
+        orderService.displayOrders(orderService.getOrdersByUserId(101));
+    }
+}

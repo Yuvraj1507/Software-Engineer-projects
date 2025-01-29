@@ -1,0 +1,72 @@
+ package models;
+
+import java.util.Date;
+
+public class Order {
+    private int orderId;
+    private int userId;
+    private int pizzaId;
+    private int quantity;
+    private double totalPrice;
+    private Date orderDate;
+
+    // Constructors
+    public Order() {}
+
+    public Order(int userId, int pizzaId, int quantity, double totalPrice) {
+        this.userId = userId;
+        this.pizzaId = pizzaId;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.orderDate = new Date(); // Set the current date and time
+    }
+
+    // Getters and Setters
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getPizzaId() {
+        return pizzaId;
+    }
+
+    public void setPizzaId(int pizzaId) {
+        this.pizzaId = pizzaId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
+    }
+}

@@ -1,0 +1,24 @@
+package Tests;
+import models.Order;
+import services.OrderService;
+
+public class TestOrderService {
+    public static void main(String[] args) {
+        // Step 1: Create an instance of the OrderService class
+        OrderService orderService = new OrderService();
+        
+        // Step 2: Create an Order object with sample data (you can adjust this based on your needs)
+        // Example: User with ID 1 orders 2 pizzas (Pizza ID 1), with a total price of $19.98.
+        Order order = new Order(1, 1, 2, 19.98); // userId = 1, pizzaId = 1, quantity = 2, totalPrice = 19.98
+        
+        // Step 3: Call the placeOrder() method to try to place the order
+        boolean orderPlaced = orderService.placeOrder(order);
+        
+        // Step 4: Print the result to the console
+        if (orderPlaced) {
+            System.out.println("Order placed successfully!");
+        } else {
+            System.out.println("Failed to place order.");
+        }
+    }
+}

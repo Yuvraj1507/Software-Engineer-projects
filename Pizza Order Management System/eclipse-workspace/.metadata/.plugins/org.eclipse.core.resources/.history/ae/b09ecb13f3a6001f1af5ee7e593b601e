@@ -1,0 +1,68 @@
+package models;
+
+public class Order {
+    private int orderId;
+    private int userId;
+    private Pizza pizza;
+    private int quantity;
+    private double totalPrice;
+
+    // Constructor
+    public Order(int orderId, int userId, Pizza pizza, int quantity) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.pizza = pizza;
+        this.quantity = quantity;
+        this.totalPrice = calculateTotalPrice(); // Calculate total price when the order is created
+    }
+
+    // Method to calculate total price
+    public double calculateTotalPrice() {
+        return pizza.getPrice() * quantity; // Total price is pizza price * quantity
+    }
+
+    // Getters and setters
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public Pizza getPizza() {
+        return pizza;
+    }
+
+    public void setPizza(Pizza pizza) {
+        this.pizza = pizza;
+        this.totalPrice = calculateTotalPrice(); // Recalculate price when pizza changes
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+        this.totalPrice = calculateTotalPrice(); // Recalculate price when quantity changes
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "Order ID: " + orderId + ", User ID: " + userId + ", Pizza: " + pizza.getName() +
+               ", Quantity: " + quantity + ", Total Price: " + totalPrice;
+    }
+}

@@ -1,0 +1,56 @@
+package Tests;
+
+import models.Pizza;
+import models.Order;
+import services.OrderService;
+import database.DatabaseConnection;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class TestOrderService {
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        // Step 1: Add a new order (Test addOrder)
+        Pizza pizza = new Pizza(1, "Margherita", 12.99);  // Assuming pizza ID 1 is available in the database
+        Order order = new Order(0, 101, pizza, 2);  // User ID 101, 2 pizzas
+
+        boolean isOrderAdded = orderService.addOrder(order);
+        if (isOrderAdded) {
+            System.out.println("Order added successfully!");
+        } else {
+            System.out.println("Failed to add order.");
+        }
+
+        // Step 2: Retrieve orders by user ID (Test getOrdersByUserId)
+        int userId = 101;
+        System.out.println("\nFetching orders for User ID: " + userId);
+        var orders = orderService.getOrdersByUserId(userId);
+
+        if (orders.isEmpty()) {
+            System.out.println("No orders found for user ID: " + userId);
+        } else {
+            for (Order fetchedOrder : orders) {
+                System.out.println(fetchedOrder);
+            }
+        }
+
+        // Clean up test data if needed
+        cleanUpTestData();
+    }
+
+    // Optional: Cleanup function to delete the test data after the test
+    private static void cleanUpTestData() {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String deleteOrderSQL = "DELETE FROM orders WHERE user_id = 101"; // Change as per your test scenario
+            try (PreparedStatement ps = connection.prepareStatement(deleteOrderSQL)) {
+                ps.executeUpdate();
+                System.out.println("Test data cleaned up successfully.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}

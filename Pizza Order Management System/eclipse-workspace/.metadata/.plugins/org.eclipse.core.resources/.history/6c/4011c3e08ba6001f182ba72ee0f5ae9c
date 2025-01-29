@@ -1,0 +1,21 @@
+package main;
+
+import services.UserService;  // Import UserService from services package
+import models.User;  // Import User from models package
+
+public class Main {
+    public static void main(String[] args) {
+        UserService userService = new UserService();  // Create an instance of UserService
+
+        // Test user registration with a new user
+        User user = new User("john_doe", "password123");
+        boolean isRegistered = userService.registerUser(user);
+
+        // Print the result of registration
+        if (isRegistered) {
+            System.out.println("User registered successfully!");
+        } else {
+            System.out.println("User registration failed!");
+        }
+    }
+}

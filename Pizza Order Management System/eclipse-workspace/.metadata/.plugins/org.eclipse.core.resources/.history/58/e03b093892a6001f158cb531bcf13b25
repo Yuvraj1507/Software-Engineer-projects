@@ -1,0 +1,29 @@
+package services;
+
+import database.DatabaseConnection;
+import models.User;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class UserService {
+
+    // Method for user registration
+    public boolean registerUser(User user) {
+        String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // Set values for the parameters in the SQL query
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());  // In a real app, you should hash this password
+
+            // Execute the insert statement and return true if successful
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error during user registration: " + e.getMessage());
+            return false;  // Return false if there was an error
+        }
+    }
+}

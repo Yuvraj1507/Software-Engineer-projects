@@ -1,0 +1,50 @@
+package models;
+
+public class Order {
+    private int orderId;
+    private int userId;
+    private Pizza pizza;
+    private int quantity;
+    private double totalPrice;
+
+    // Constructor to initialize the Order
+    public Order(int orderId, int userId, Pizza pizza, int quantity) {
+        this.orderId = orderId;
+        this.userId = userId;
+        this.pizza = pizza;
+        this.quantity = quantity;
+        this.totalPrice = calculateTotalPrice();  // Assuming this method calculates the total price
+    }
+
+    // Method to calculate total price
+    private double calculateTotalPrice() {
+        return pizza.getPrice() * quantity; // Price per pizza * quantity
+    }
+
+    // Getters and setters for all fields
+    public int getOrderId() {
+        return orderId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public Pizza getPizza() {
+        return pizza;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "Order ID: " + orderId + ", User ID: " + userId + ", Pizza: " + pizza.getName() +
+               ", Quantity: " + quantity + ", Total Price: " + totalPrice;
+    }
+}

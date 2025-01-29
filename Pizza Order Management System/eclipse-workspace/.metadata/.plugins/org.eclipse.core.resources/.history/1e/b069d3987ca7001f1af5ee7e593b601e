@@ -1,0 +1,41 @@
+package tests;
+
+import models.Order;
+import models.Pizza;
+import services.OrderService;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class OrderServiceTest {
+
+    @Test
+    public void testAddOrder() {
+        OrderService orderService = new OrderService();
+        Pizza pizza = new Pizza(1, "Margherita", 8.99);
+        Order order = new Order(1, 101, pizza, 2); // Mock order data
+
+        boolean result = orderService.addOrder(order);
+        assertTrue(result, "Order should be added successfully");
+    }
+
+    @Test
+    public void testGetOrdersByUserId() {
+        OrderService orderService = new OrderService();
+
+        int userId = 101; // Mock user ID
+        var orders = orderService.getOrdersByUserId(userId);
+
+        assertNotNull(orders, "Orders list should not be null");
+        assertTrue(orders.size() > 0, "Orders list should contain at least one order");
+    }
+
+    @test
+    public void testGetPizzaById() {
+        OrderService orderService = new OrderService();
+
+        Pizza pizza = orderService.getPizzaById(1); // Mock pizza ID
+        assertNotNull(pizza, "Pizza should not be null");
+        assertEquals("Margherita", pizza.getName(), "Pizza name should match");
+    }
+}

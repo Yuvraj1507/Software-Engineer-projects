@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Monitoring Dashboard</title>
+
+    <!-- Include external CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
+    <!-- Include Plotly.js for graphs -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Health Monitoring Dashboard</h1>
+
+        <!-- Heart Rate Card -->
+        <div class="card">
+            <h2>Heart Rate (BPM)</h2>
+            <div id="heart-rate-graph" style="height: 400px;"></div>
+        </div>
+
+        <!-- Temperature Card -->
+        <div class="card">
+            <h2>Body Temperature (°C)</h2>
+            <div id="temperature-graph" style="height: 400px;"></div>
+        </div>
+
+        <!-- Location Card -->
+        <div class="card">
+            <h2>Location</h2>
+            <div id="location">Loading...</div>
+        </div>
+
+        <!-- Heart Rate Alert -->
+        <div id="heart-alert"></div>
+
+        <!-- Temperature Alert -->
+        <div id="temp-alert"></div>
+    </div>
+
+    <!-- Include external JS -->
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+    <script>
+        let heartRateData = [];
+        let temperatureData = [];
+        let timeData = [];
+
+        // Threshold values for alerts
+        const heartRateLowThreshold = 60;
+        const heartRateHighThreshold = 100;
+        const tempLowThreshold = 36.0;
+        const tempHighThreshold = 37.5;
+
+        // Function to fetch the latest health data from the Flask API
+        function fetchHealthData() {
+            fetch('/health_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Log data to verify it's being fetched correctly
+                    console.log(data);
+
+                    const heartRate = data.heart_rate;
+                    const temperature = data.body_temperature;
+                    const latitude = data.latitude.toFixed(4);
+                    const longitude = data.longitude.toFixed(4);
+
+                    // Update location display
+                    document.getElementById('location').textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+                    // Add new data points to the arrays
+                    const currentTime = new Date().toLocaleTimeString();
+                    timeData.push(currentTime);
+                    heartRateData.push(heartRate);
+                    temperatureData.push(temperature);
+
+                    // Limit the data arrays to the latest 20 data points
+                    if (heartRateData.length > 20) {
+                        heartRateData.shift();
+                        temperatureData.shift();
+                        timeData.shift();
+                    }
+
+                    // Update the Heart Rate graph
+                    Plotly.newPlot('heart-rate-graph', [{
+                        x: timeData,
+                        y: heartRateData,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: { color: 'blue' },
+                        name: 'Heart Rate'
+                    }]);
+
+                    // Update the Body Temperature graph
+                    Plotly.newPlot('temperature-graph', [{
+                        x: timeData,
+                        y: temperatureData,
+                        type: 'scatter',
+                        mode: 'lines+markers',
+                        marker: { color: 'red' },
+                        name: 'Body Temperature'
+                    }]);
+
+                    // Update alerts for Heart Rate
+                    const heartRateAlert = document.getElementById('heart-alert');
+                    if (heartRate < heartRateLowThreshold) {
+                        heartRateAlert.innerHTML = "<div class='alert'>Heart rate is too low! (< 60 BPM)</div>";
+                    } else if (heartRate > heartRateHighThreshold) {
+                        heartRateAlert.innerHTML = "<div class='alert'>Heart rate is too high! (> 100 BPM)</div>";
+                    } else {
+                        heartRateAlert.innerHTML = "";  // No alert
+                    }
+
+                    // Update alerts for Body Temperature
+                    const tempAlert = document.getElementById('temp-alert');
+                    if (temperature < tempLowThreshold) {
+                        tempAlert.innerHTML = "<div class='alert'>Temperature is too low! (< 36°C)</div>";
+                    } else if (temperature > tempHighThreshold) {
+                        tempAlert.innerHTML = "<div class='alert'>Temperature is too high! (> 37.5°C)</div>";
+                    } else {
+                        tempAlert.innerHTML = "";  // No alert
+                    }
+
+                    // Update other health values
+                    document.getElementById('heart-rate').textContent = `${heartRate} BPM`;
+                    document.getElementById('temperature').textContent = `${temperature} °C`;
+                })
+                .catch(error => {
+                    console.error("Error fetching health data:", error);
+                });
+        }
+
+        // Fetch data every 5 seconds
+        setInterval(fetchHealthData, 5000);
+
+    </script>
+</body>
+</html>

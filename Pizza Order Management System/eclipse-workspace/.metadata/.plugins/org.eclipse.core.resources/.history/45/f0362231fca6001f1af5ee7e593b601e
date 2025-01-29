@@ -1,0 +1,163 @@
+package main;
+
+import models.User;
+import models.Pizza;
+import models.Order;
+import services.UserService;
+import services.OrderService;
+import services.PizzaService;
+
+import java.util.List;
+import java.util.Scanner;
+
+public class main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        UserService userService = new UserService();
+        OrderService orderService = new OrderService();
+        PizzaService pizzaService = new PizzaService();
+
+        // Show the main menu
+        while (true) {
+            System.out.println("***** Welcome to Pizza Order System *****");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume the newline
+
+            if (choice == 1) {
+                registerUser(scanner, userService);
+            } else if (choice == 2) {
+                User user = loginUser(scanner, userService);
+                if (user != null) {
+                    userMenu(scanner, user, pizzaService, orderService);
+                }
+            } else if (choice == 3) {
+                System.out.println("Exiting... Goodbye!");
+                break;
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static void registerUser(Scanner scanner, UserService userService) {
+        System.out.println("**** Registration ****");
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        User user = new User(0, username, password);
+        if (userService.registerUser(user)) {
+            System.out.println("Registration successful! You can now login.");
+        } else {
+            System.out.println("Registration failed.");
+        }
+    }
+
+    private static User loginUser(Scanner scanner, UserService userService) {
+        System.out.println("**** Login ****");
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+
+        User user = userService.loginUser(username, password);
+        if (user != null) {
+            System.out.println("Login successful! Welcome, " + user.getUsername() + "!");
+            return user;
+        } else {
+            System.out.println("Invalid credentials.");
+            return null;
+        }
+    }
+
+    private static void userMenu(Scanner scanner, User user, PizzaService pizzaService, OrderService orderService) {
+        while (true) {
+            System.out.println("\n**** User Menu ****");
+            System.out.println("1. View Pizza Menu");
+            System.out.println("2. Place Order");
+            System.out.println("3. View Your Orders");
+            System.out.println("4. Logout");
+            System.out.print("Choose an option: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();  // Consume the newline
+
+            if (choice == 1) {
+                viewPizzaMenu(pizzaService);
+            } else if (choice == 2) {
+                placeOrder(scanner, user, pizzaService, orderService);
+            } else if (choice == 3) {
+                viewOrders(user, orderService);
+            } else if (choice == 4) {
+                System.out.println("Logging out...");
+                break;
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private static void viewPizzaMenu(PizzaService pizzaService) {
+        List<Pizza> pizzas = pizzaService.getPizzaMenu();
+        if (pizzas.isEmpty()) {
+            System.out.println("No pizzas available.");
+        } else {
+            System.out.println("\n***** Pizza Menu *****");
+            for (Pizza pizza : pizzas) {
+                System.out.println(pizza);
+            }
+        }
+    }
+
+    private static void placeOrder(Scanner scanner, User user, PizzaService pizzaService, OrderService orderService) {
+        List<Pizza> pizzas = pizzaService.getPizzaMenu();
+        if (pizzas.isEmpty()) {
+            System.out.println("No pizzas available to order.");
+            return;
+        }
+
+        System.out.println("\n***** Choose a Pizza *****");
+        for (int i = 0; i < pizzas.size(); i++) {
+            System.out.println((i + 1) + ". " + pizzas.get(i).getName() + " - $" + pizzas.get(i).getPrice());
+        }
+
+        System.out.print("Select pizza number: ");
+        int pizzaChoice = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline
+        Pizza selectedPizza = pizzas.get(pizzaChoice - 1);
+
+        System.out.print("Enter quantity: ");
+        int quantity = scanner.nextInt();
+        scanner.nextLine();  // Consume the newline
+
+        double totalPrice = selectedPizza.getPrice() * quantity;
+        Order order = new Order(0, user.getUserId(), selectedPizza, quantity);
+        order.setTotalPrice(totalPrice);
+
+        if (orderService.addOrder(order)) {
+            System.out.println("Order placed successfully! Total price: $" + totalPrice);
+        } else {
+            System.out.println("Failed to place order.");
+        }
+    }
+
+    private static void viewOrders(User user, OrderService orderService) {
+        List<Order> orders = orderService.getOrdersByUserId(user.getUserId());
+        if (orders.isEmpty()) {
+            System.out.println("You have no orders.");
+        } else {
+            System.out.println("\n***** Your Orders *****");
+            for (Order order : orders) {
+                System.out.println(order);
+            }
+        }
+    }
+}

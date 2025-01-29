@@ -1,0 +1,52 @@
+package Tests;
+
+import models.Order;
+import models.Pizza;
+import services.OrderService;
+import services.UserService;
+import java.util.List;
+
+public class TestOrderService {
+
+    public static void main(String[] args) {
+        OrderService orderService = new OrderService();
+
+        // Step 1: Ensure user exists with user_id = 2
+        int userId = 2;  // Using user_id = 2
+        String pizzaName = "Margherita";
+        int quantity = 2;
+
+        // Fetch pizza by name or id
+        Pizza pizza = getPizzaByName(pizzaName);
+
+        if (pizza != null) {
+            // Step 2: Create an order for the user
+            Order order = new Order(0, userId, pizza, quantity);  // Order ID will auto-generate
+            boolean isOrderAdded = orderService.addOrder(order);
+
+            if (isOrderAdded) {
+                System.out.println("Order added successfully.");
+            } else {
+                System.out.println("Failed to add order.");
+            }
+        } else {
+            System.out.println("Pizza not found.");
+        }
+
+        // Step 3: Fetch orders for the user and display them
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        if (!orders.isEmpty()) {
+            System.out.println("Fetching orders for User ID: " + userId);
+            orders.forEach(order -> System.out.println(order));
+        } else {
+            System.out.println("No orders found for user ID: " + userId);
+        }
+    }
+
+    // Helper method to get Pizza by name
+    private static Pizza getPizzaByName(String pizzaName) {
+        // You should implement this method to fetch pizza details from the database
+        // For now, we assume the pizza exists with ID 1.
+        return new Pizza(1, pizzaName, 12.99);  // Assuming pizza_id = 1 and price = 12.99
+    }
+}

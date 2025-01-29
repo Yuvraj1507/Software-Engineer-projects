@@ -1,0 +1,87 @@
+package services;
+
+import models.Order;
+import models.Pizza;
+import database.DatabaseConnection;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class OrderService {
+
+    // Method to add a new order to the database
+    public boolean addOrder(Order order) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String sql = "INSERT INTO orders (user_id, pizza_id, quantity, total_price) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, order.getUserId());  // Set user_id from Order object
+                ps.setInt(2, order.getPizza().getPizzaId());  // Set pizza_id from Pizza object
+                ps.setInt(3, order.getQuantity());  // Set quantity from Order object
+                ps.setDouble(4, order.getTotalPrice());  // Set total_price from Order object
+
+                int rowsAffected = ps.executeUpdate();  // Execute the update
+                return rowsAffected > 0;  // Return true if rows were inserted, false otherwise
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;  // Return false if there was an error
+        }
+    }
+
+    // Method to retrieve all orders for a specific user
+    public List<Order> getOrdersByUserId(int userId) {
+        List<Order> orders = new ArrayList<>();
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String sql = "SELECT * FROM orders WHERE user_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, userId);  // Set the user_id parameter
+                ResultSet rs = ps.executeQuery();  // Execute the query to get orders for the user
+
+                // Loop through the result set and create Order objects
+                while (rs.next()) {
+                    int orderId = rs.getInt("order_id");
+                    int pizzaId = rs.getInt("pizza_id");
+                    int quantity = rs.getInt("quantity");
+                    double totalPrice = rs.getDouble("total_price");
+
+                    // Retrieve pizza details based on pizza_id
+                    Pizza pizza = getPizzaById(pizzaId); // Fetch pizza details using pizzaId
+                    Pizza pizza = new Pizza(1, "Margherita", 12.99);
+                    System.out.println("Pizza: " + pizza);  // Debugging line
+
+                    Order order = new Order(0, 1, pizza, 2);  // userId 1, pizza 2 Margherita pizzas
+
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+         // Return the list of orders
+    }
+
+    // Helper method to retrieve pizza details by pizzaId
+    private Pizza getPizzaById(int pizzaId) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String sql = "SELECT * FROM pizzas WHERE pizza_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(sql)) {
+                ps.setInt(1, pizzaId);  // Set the pizza_id parameter
+                ResultSet rs = ps.executeQuery();  // Execute the query
+
+                if (rs.next()) {
+                    String name = rs.getString("name");  // Get pizza name from the result set
+                    double price = rs.getDouble("price");  // Get pizza price from the result set
+                    return new Pizza(pizzaId, name, price);  // Return a Pizza object
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;  // Return null if pizza is not found
+    }
+
+    // Method to display all orders for a user (for testing purposes)
+    public void displayOrders(List<Order> orders) {
+        for (Order order : orders) {
+            System.out.println(order);  // Print each order using the toString() method of the Order class
+        }
+    }
+}

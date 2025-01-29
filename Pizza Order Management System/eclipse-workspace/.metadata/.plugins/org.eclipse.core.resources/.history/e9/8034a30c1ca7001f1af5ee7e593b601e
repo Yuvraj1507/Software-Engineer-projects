@@ -1,0 +1,53 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            // Display the main menu
+            System.out.println("Welcome to Pizza Order Management System!");
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.println("3. View Pizza Menu");
+            System.out.println("4. Exit");
+            System.out.print("Please enter your choice: ");
+            
+            int choice = scanner.nextInt();
+            
+            switch (choice) {
+                case 1:
+                    login(scanner);
+                    break;
+                case 2:
+                    register(scanner);
+                    break;
+                case 3:
+                    viewPizzaMenu(scanner);
+                    break;
+                case 4:
+                    System.out.println("Thank you for using our service!");
+                    scanner.close();
+                    System.exit(0);
+                    break;
+                default:
+                    System.out.println("Invalid choice, please try again.");
+            }
+        }
+    }
+
+	private static void login(Scanner scanner) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void register(Scanner scanner) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private static void viewPizzaMenu(Scanner scanner) {
+		// TODO Auto-generated method stub
+		
+	}
+}

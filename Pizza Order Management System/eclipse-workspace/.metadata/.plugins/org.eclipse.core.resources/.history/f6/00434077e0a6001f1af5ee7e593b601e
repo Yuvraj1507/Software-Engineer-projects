@@ -1,0 +1,37 @@
+package services;
+
+import database.DatabaseConnection; // Ensure the correct package for database connection
+import models.pizza; // Import the Pizza model
+import java.util.ArrayList; // Import ArrayList
+import java.util.List; // Import List
+import java.sql.Connection; // Import JDBC connection
+import java.sql.PreparedStatement; // Import PreparedStatement
+import java.sql.ResultSet; // Import ResultSet
+import java.sql.SQLException; // Import SQLException
+
+public class PizzaService {
+
+    // Method to fetch the pizza menu from the database
+    public List<Pizza> getPizzaMenu() {
+        List<pizza> pizzas = new ArrayList<>(); // Initialize an ArrayList to store Pizza objects
+        String sql = "SELECT * FROM pizzas"; // SQL query to retrieve pizzas
+
+        try (Connection conn = DatabaseConnection.getConnection(); // Open database connection
+             PreparedStatement stmt = conn.prepareStatement(sql)) { // Prepare the SQL statement
+             
+            ResultSet rs = stmt.executeQuery(); // Execute the query
+            while (rs.next()) { // Iterate through the result set
+                Pizza pizza = new Pizza(
+                        rs.getInt("pizza_id"), // Retrieve pizza ID
+                        rs.getString("name"), // Retrieve pizza name
+                        rs.getDouble("price") // Retrieve pizza price
+                );
+                pizzas.add(pizza); // Add the pizza object to the list
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching pizza menu: " + e.getMessage()); // Handle SQL exceptions
+        }
+        return pizzas; // Return the list of pizzas
+    }
+}
+

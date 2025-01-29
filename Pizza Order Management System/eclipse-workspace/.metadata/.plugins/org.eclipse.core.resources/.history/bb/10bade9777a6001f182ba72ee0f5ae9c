@@ -1,0 +1,23 @@
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import database.DatabaseConnection; // Import your DatabaseConnection class
+
+public class TestConnection {
+    public static void main(String[] args) {
+        try {
+            // Get the connection using the DatabaseConnection class
+            Connection conn = DatabaseConnection.getConnection();
+            
+            // Check if the connection was successful
+            if (conn != null) {
+                System.out.println("Connection successful!"); // Print success message
+                conn.close(); // Close the connection after testing
+            }
+        } catch (SQLException e) {
+            // If an exception occurs, print the failure message and the exception
+            System.out.println("Connection failed!");
+            e.printStackTrace(); // Print the stack trace for troubleshooting
+        }
+    }
+}

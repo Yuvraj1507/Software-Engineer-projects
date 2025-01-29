@@ -1,0 +1,21 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <ActionBar title="My Trips">
+        <ActionItem tap="{{ onAddTrip }}" ios.position="right" android.position="actionBar">
+            <Label text="+" class="fas text-2xl" />
+        </ActionItem>
+    </ActionBar>
+
+    <GridLayout>
+        <ListView items="{{ trips }}" class="list-group">
+            <ListView.itemTemplate>
+                <StackLayout class="card">
+                    <Label text="{{ title }}" class="font-bold text-lg" />
+                    <Label text="{{ destination.address }}" class="text-gray-600" />
+                    <Label text="{{ 'From: ' + startDate + ' To: ' + endDate }}" class="text-sm" />
+                    <ProgressBar value="{{ totalSpent }}" maxValue="{{ budget }}" class="m-2" />
+                    <Label text="{{ 'Budget: $' + budget + ' | Spent: $' + totalSpent }}" class="text-sm text-gray-600" />
+                </StackLayout>
+            </ListView.itemTemplate>
+        </ListView>
+    </GridLayout>
+</Page>
